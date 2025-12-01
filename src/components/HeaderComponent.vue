@@ -1,5 +1,5 @@
 <template>
-    <el-row justify="space-between" align="middle">
+    <el-row class="solid-border-bottom" justify="space-between" align="middle">
         <el-col :span="8">
             <router-link to="/" class="logo">
                 <img src="../assets/logo_riff.png" alt="Logo" style="width: 120px;" />
@@ -23,5 +23,8 @@
 <style scoped>
 .el-menu--horizontal.el-menu {
     border-bottom: none;
+}
+.solid-border-bottom {
+  border-bottom: 1px solid #333 !important;
 }
 </style>
