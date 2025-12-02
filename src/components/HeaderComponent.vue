@@ -45,6 +45,6 @@ watch(() => appState.loggedIn, (newVal) => {
 }
 
 .solid-border-bottom {
-    border-bottom: 1px solid #333 !important;
+    border-bottom: 1px solid #d0d0d0;
 }
 </style>
