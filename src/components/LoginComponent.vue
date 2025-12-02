@@ -17,7 +17,7 @@
             <div v-else class="login-container">
                 <el-text tag="h3" size="large" class="login-title">输入你的访问令牌</el-text>
                 <el-divider />
-                <el-form :model="form" label-width="auto" style="margin-top: 20px;">
+                <el-form label-width="auto" style="margin-top: 20px;">
                     <el-form-item label="Access Token">
                         <el-input v-model="appState.accessToken" placeholder="输入或粘贴访问令牌" type="password" show-password
                             clearable @keyup.enter="saveToken" />
@@ -112,6 +112,14 @@ const tokenInvalid = () => {
     })
 }
 
+const networkError = () => {
+    ElNotification({
+        title: '网络错误',
+        message: '网络请求失败，请检查网络连接后重试。',
+        type: 'error',
+    })
+}
+
 const getUserInfo = async () => {
     try {
         const response = await api.get('/v0/me', { useToken: true })
@@ -129,9 +137,35 @@ const getUserInfo = async () => {
         })
     } catch (error) {
         console.error('获取用户信息失败:', error)
-        appState.loggedIn = false
-        localStorage.removeItem('accessToken')
-        tokenInvalid()
+
+        // 判断是否为网络错误
+        if (error.code === 'ERR_NETWORK' ||
+            error.message?.includes('Network Error') ||
+            error.message?.includes('timeout') ||
+            !error.response) {
+            // 网络错误：不删除token，仅提示网络问题
+            networkError()
+            // 保持当前状态，不清除token，允许用户稍后重试
+            appState.loggedIn = false
+        }
+        // 判断是否为401错误（token无效）
+        else if (error.response?.status === 401) {
+            // 令牌无效：清除token并提示
+            appState.loggedIn = false
+            localStorage.removeItem('accessToken')
+            tokenInvalid()
+        }
+        // 其他服务器错误
+        else {
+            // 其他错误：清除token并提示
+            appState.loggedIn = false
+            localStorage.removeItem('accessToken')
+            ElNotification({
+                title: '请求失败',
+                message: `服务器错误: ${error.response?.status || '未知错误'}`,
+                type: 'error',
+            })
+        }
     } finally {
         loading.value = false
     }
