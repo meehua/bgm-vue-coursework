@@ -13,18 +13,24 @@
             </el-menu>
         </el-col>
         <el-col :span="4">
-            <el-button type="info">未登入</el-button>
+            <el-button type="info" @click="appState.loginBoxIsShow = !appState.loginBoxIsShow ">未登入</el-button>
         </el-col>
     </el-row>
+    <LoginComponent/>
 </template>
 <script setup>
+import LoginComponent from './LoginComponent.vue'
+import { inject, ref } from 'vue'
+
+const appState = inject('appState')
 
 </script>
 <style scoped>
 .el-menu--horizontal.el-menu {
     border-bottom: none;
 }
+
 .solid-border-bottom {
-  border-bottom: 1px solid #333 !important;
+    border-bottom: 1px solid #333 !important;
 }
 </style>

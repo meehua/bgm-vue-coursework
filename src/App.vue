@@ -12,8 +12,14 @@
 </template>
 
 <script setup>
-import { defineComponent } from 'vue'
+import { provide, reactive } from 'vue'
 import { ElConfigProvider } from 'element-plus'
 import HeaderComponent from './components/HeaderComponent.vue'
 
+
+const appState=reactive({
+    loginBoxIsShow:false,
+})
+
+provide('appState',appState)
 </script>
