@@ -13,17 +13,31 @@
             </el-menu>
         </el-col>
         <el-col :span="4">
-            <el-button type="info" @click="appState.loginBoxIsShow = !appState.loginBoxIsShow ">未登入</el-button>
+            <el-button :type="loginButtonType" @click="appState.loginBoxIsShow = !appState.loginBoxIsShow">{{
+                loginButtonText }}</el-button>
         </el-col>
     </el-row>
-    <LoginComponent/>
+    <LoginComponent />
 </template>
 <script setup>
 import LoginComponent from './LoginComponent.vue'
-import { inject, ref } from 'vue'
+import { inject, ref, watch } from 'vue'
+
+const loginButtonText = ref('未登入')
+const loginButtonType = ref('info')
 
 const appState = inject('appState')
 
+// 监听 appState.loggedIn 的变化
+watch(() => appState.loggedIn, (newVal) => {
+    if (newVal) {
+        loginButtonText.value = '已登入'
+        loginButtonType.value = 'success'
+    } else {
+        loginButtonText.value = '未登入'
+        loginButtonType.value = 'info'
+    }
+}, { immediate: true })
 </script>
 <style scoped>
 .el-menu--horizontal.el-menu {
