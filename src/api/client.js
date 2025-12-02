@@ -4,7 +4,7 @@ import axios from 'axios'
  * 创建 BGM.tv API 客户端
  * @param {Object} options - 配置选项
  * @param {string} [options.baseURL='https://api.bgm.tv'] - API 基础 URL
- * @param {number} [options.timeout=15000] - 请求超时时间
+ * @param {number} [options.timeout=5000] - 请求超时时间
  * @returns {Object} axios 实例
  */
 const createApiClient = (options = {}) => {
@@ -25,7 +25,7 @@ const createApiClient = (options = {}) => {
         const { useToken = false } = config
 
         if (useToken) {
-            const token = localStorage.getItem('bgm_token')
+            const token = localStorage.getItem('accessToken')
             if (token) {
                 config.headers = {
                     ...config.headers,

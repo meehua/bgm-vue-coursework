@@ -17,9 +17,10 @@ import { ElConfigProvider } from 'element-plus'
 import HeaderComponent from './components/HeaderComponent.vue'
 
 
-const appState=reactive({
-    loginBoxIsShow:false,
+const appState = reactive({
+    loginBoxIsShow: false,
+    LoggedIn: false,
 })
 
-provide('appState',appState)
+provide('appState', appState)
 </script>
