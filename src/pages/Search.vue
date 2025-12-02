@@ -4,12 +4,7 @@
 
       <!-- 搜索栏 -->
       <el-header>
-        <el-input
-          v-model="input"
-          style="width: 240px"
-          placeholder="请输入搜索内容"
-          @keyup.enter="search"
-        />
+        <el-input v-model="input" style="width: 240px" placeholder="请输入搜索内容" @keyup.enter="search" />
         <el-button type="primary" :loading="loading" @click="search">搜索</el-button>
       </el-header>
 
@@ -20,14 +15,7 @@
 
         <!-- 搜索结果列表 -->
         <el-row :gutter="16">
-          <el-col
-            v-for="item in results.slice(0, 16)"
-            :key="item.id"
-            :xs="24"
-            :sm="12"
-            :md="8"
-            :lg="6"
-          >
+          <el-col v-for="item in results.slice(0, 16)" :key="item.id" :xs="24" :sm="12" :md="8" :lg="6">
             <el-card shadow="hover" style="margin-bottom:12px" @click="goSubject(item.id)">
               <el-row :gutter="8">
                 <el-col :span="8">
@@ -45,12 +33,7 @@
 
         <!-- 分页 -->
         <div style="display:flex;justify-content:center;margin-top:12px" v-if="results.length > 0">
-          <el-pagination
-            layout="prev, pager, next"
-            :page-size="pageSize"
-            :total="total"
-            @current-change="onPage"
-          />
+          <el-pagination layout="prev, pager, next" :page-size="pageSize" :total="total" @current-change="onPage" />
         </div>
       </el-main>
 
@@ -61,7 +44,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import router from '../router'
-import api from '../../api/client'
+import api from '../api/client'
 
 const input = ref('')        // 搜索关键词
 const results = ref<any[]>([]) // 搜索结果

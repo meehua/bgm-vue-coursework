@@ -11,11 +11,8 @@
     <div v-else>
       <el-row :gutter="16">
         <el-col :span="6">
-          <el-image
-            :src="subject?.images?.large || subject?.images?.grid"
-            fit="contain"
-            style="width:100%;height:300px"
-          />
+          <el-image :src="subject?.images?.large || subject?.images?.grid" fit="contain"
+            style="width:100%;height:300px" />
         </el-col>
         <el-col :span="18">
           <h2 style="margin:0 0 8px">{{ subject?.name_cn || subject?.name }}</h2>
@@ -54,7 +51,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import api from '../../api/client'
+import api from '../api/client'
 
 const route = useRoute()
 const router = useRouter()
@@ -67,7 +64,7 @@ const load = async () => {
   try {
     const id = route.params.id
     if (!id) return
-    const { data } = await api.get(`/subject/${id}`, { params:{responseGroup:'large'} })
+    const { data } = await api.get(`/subject/${id}`, { params: { responseGroup: 'large' } })
     subject.value = data
   } finally {
     loading.value = false
@@ -75,7 +72,7 @@ const load = async () => {
 }
 
 const toComments = () => router.push(`/subject/${route.params.id}/comments`)
-const mapType = (t:number|undefined) => ({1:'书籍',2:'动画',3:'音乐',4:'游戏',6:'三次元'} as any)[t??0]||'-'
+const mapType = (t: number | undefined) => ({ 1: '书籍', 2: '动画', 3: '音乐', 4: '游戏', 6: '三次元' } as any)[t ?? 0] || '-'
 
 onMounted(load)
 </script>
