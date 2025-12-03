@@ -21,7 +21,7 @@
             <el-col :span="16">
               <div style="font-weight:600">{{ item.name_cn || item.name }}</div>
               <div style="color:#666">评分: {{ item.rating?.score ?? '-' }}</div>
-              <div style="color:#666">放送: {{ item.air_date || '-' }}</div>
+              <div style="color:#666">放送: {{ item.date || '-' }}</div>
             </el-col>
           </el-row>
         </el-card>
@@ -39,7 +39,7 @@ import router from '../router'
 import api from '../api/client.js'
 
 const keyword = ref('')
-const type = ref(2)  // 移除类型注解
+const type = ref(2)
 const types = [
   { label: '书籍', value: 1 },
   { label: '动画', value: 2 },
@@ -47,36 +47,47 @@ const types = [
   { label: '游戏', value: 4 },
   { label: '三次元', value: 6 }
 ]
-const results = ref([])  // 移除类型注解
+const results = ref([])
 const total = ref(0)
 const page = ref(1)
 const pageSize = 20
 const loading = ref(false)
 
 const search = async () => {
-  if (!keyword.value) return
-  loading.value = true
+  if (!keyword.value) return;
+  loading.value = true;
+
   try {
-    const path = `/search/subject/${encodeURIComponent(keyword.value)}`
-    const { data } = await api.get(path, {
-      params: {
-        responseGroup: 'small',
-        type: type.value !== null && type.value !== undefined ? type.value : undefined,  // 用条件表达式替换 ?? 操作符
-        start: (page.value - 1) * pageSize,
-        max_results: pageSize
+    const queryParams = {
+      limit: pageSize,
+      offset: (page.value - 1) * pageSize
+    };
+
+    const requestBody = {
+      keyword: keyword.value,
+      sort: 'rank',
+      filter: {
+        type: [type.value]
       }
-    })
-    results.value = data.list || data || []
-    total.value = data.results || results.value.length
+    };
+
+    const { data: responseData } = await api.post(
+      '/v0/search/subjects',
+      requestBody, // 请求体数据
+      { params: queryParams }
+    );
+
+    results.value = responseData.data;
+    total.value = responseData.total;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
-const onPage = (p) => {  // 移除参数类型注解
+const onPage = (p) => {
   page.value = p
   search()
 }
 
-const goSubject = (id) => router.push(`/subject/${id}`)  // 移除参数类型注解
+const goSubject = (id) => router.push(`/subject/${id}`) 
 </script>
