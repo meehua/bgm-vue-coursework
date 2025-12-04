@@ -20,7 +20,7 @@
                                 <el-col :span="16">
                                     <div style="font-weight:600">{{ item.name_cn || item.name }}</div>
                                     <div style="color:#666">评分: {{ item.rating?.score ?? '-' }}</div>
-                                    <div style="color:#666">话数: {{ item.eps_count ?? item.eps ?? '-' }}</div>
+                                    <div style="color:#666">Rank: {{ item.rank ?? '-' }}</div>
                                 </el-col>
                             </el-row>
                         </el-card>
@@ -33,8 +33,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import router from '../router'
-import api from '../api/client'
+import router from '../router.js'
+import api from '../api/client.js'
 
 const calendar = ref([])
 const active = ref('1')
