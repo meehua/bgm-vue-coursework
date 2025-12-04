@@ -93,6 +93,7 @@ const logout = () => {
         localStorage.removeItem('accessToken')
         appState.accessToken = ''
         appState.loggedIn = false
+        appState.userInfo = null
         avatarSrc.value = ''
         nickname.value = ''
         sign.value = ''
