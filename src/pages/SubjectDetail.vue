@@ -20,7 +20,7 @@
                   <el-text tag="h1" size="large" style="font-size: 24px; font-weight: bold;">{{ subject?.name_cn ||
                     subject?.name }}</el-text>
                   <el-text v-if="subject?.name_cn && subject?.name !== subject?.name_cn" type="info">{{ subject?.name
-                  }}</el-text>
+                    }}</el-text>
 
                   <el-row align="middle" :gutter="20">
                     <el-col :span="24">
@@ -115,7 +115,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, inject } from 'vue'
+import { ref, onMounted, computed, inject, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { Star } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
@@ -147,9 +147,10 @@ const load = async () => {
 
 const loadUserCollection = async () => {
   try {
-    const { data } = await api.get(`/v0/users/${appState.userInfo.username}/collections/${subject.value.id}`, { useToken: true })
+    const response = await api.get(`/v0/users/${appState.userInfo.username}/collections/${subject.value.id}`, { useToken: true })
     collected.value = true
   } catch (e) {
+    // console.error(e)
     collected.value = false
   }
 }
@@ -175,4 +176,15 @@ const getCharacters = (sub) => sub?.crt || sub?.characters || []
 const mapType = (t) => ({ 1: '书籍', 2: '动画', 3: '音乐', 4: '游戏', 6: '三次元' })[t ?? 0] || '条目'
 
 onMounted(load)
+
+// watch(appState, (newVal, oldVal) => {
+//   if (newVal?.loggedIn !== oldVal?.loggedIn)
+//     load
+// },
+//   { immediate: true }
+// )
+
+watch(() => appState.loggedIn, (loggedIn) => {
+  loadUserCollection().catch(() => { })
+}, { immediate: true })
 </script>
