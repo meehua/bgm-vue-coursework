@@ -28,7 +28,7 @@
                     <el-row :gutter="16">
                         <el-col v-for="item in visibleItems" :key="item.subject_id" :xs="24" :sm="12" :md="8" :lg="6">
                             <el-card shadow="hover" style="margin-bottom:12px; position:relative"
-                                @click="openEdit(item)">
+                                @click="openEdit(item.subject)">
                                 <el-row :gutter="8">
                                     <el-col :span="8">
                                         <el-image :src="imgSrc(item)" fit="cover" style="width:100%;height:140px"
@@ -56,7 +56,7 @@
             </div>
         </el-card>
         <el-backtop :right="24" :bottom="24" />
-        <EditRatingDialog :subject-id="editingId" v-model="editVisible" @saved="onSaved" />
+        <EditRatingDialog :subject="editingSubject" v-model="editVisible" @saved="onSaved" />
     </div>
 </template>
 
@@ -156,10 +156,10 @@ const loadMore = async () => {
 const toDetail = (id) => router.push(`/subject/${id}`)
 
 const editVisible = ref(false)
-const editingId = ref(0)
-const openEdit = (item) => { editingId.value = item.subject_id; editVisible.value = true }
+const editingSubject = ref(null)
+const openEdit = (item) => { editingSubject.value = item; editVisible.value = true }
 const onSaved = (payload) => {
-    const idx = results.value.findIndex(i => i.subject_id === editingId.value)
+    const idx = results.value.findIndex(i => i.subject_id === editingSubject.value.id)
     if (idx >= 0) {
         results.value[idx].rate = payload.rate
         results.value[idx].comment = payload.comment
