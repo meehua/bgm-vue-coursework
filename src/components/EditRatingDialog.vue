@@ -28,12 +28,12 @@
 
 <script setup>
 import { ref, watch, inject, computed } from 'vue'
-import { ElNotification } from 'element-plus'
+import { configProviderProps, ElNotification } from 'element-plus'
 import api from '../api/client'
 import { Delete } from '@element-plus/icons-vue'
 
 const props = defineProps({
-    subjectId: Number,
+    subject: Object,
     modelValue: Boolean
 })
 
@@ -45,9 +45,7 @@ const loading = ref(false)
 const saving = ref(false)
 const rate = ref(0)
 const comment = ref('')
-const subjectName = ref('')
-const dialogTitle = computed(() => subjectName.value ? `收藏条目 · ${subjectName.value}` : '收藏条目')
-
+const dialogTitle = ref('收藏条目')
 
 const STATUS_OPTIONS = [
     { label: '想看', value: 1 },
@@ -92,8 +90,8 @@ const epStatus = ref('')
 const epStatusList = getLabelList()
 
 watch(() => props.modelValue, (v) => {
-    subjectName.value = ''
     visibleInner.value = v
+    dialogTitle.value = props.subject ? `收藏条目 · ${props.subject?.name_cn || props.subject?.name}` : '收藏条目'
     if (v) load()
 })
 
@@ -103,13 +101,15 @@ const load = async () => {
     if (!appState.userInfo?.username) return
     loading.value = true
     try {
-        const { data } = await api.get(`/v0/users/${appState.userInfo.username}/collections/${props.subjectId}`, { useToken: true })
+        const request = await api.get(`/v0/users/${appState.userInfo.username}/collections/${props.subject?.id}`, { useToken: true })
+        const data = request?.data
         rate.value = data?.rate ?? 0
         comment.value = data?.comment ?? ''
         epStatus.value = getLabelByValue(data?.type) || ''
-        subjectName.value = data?.subject?.name_cn || data?.subject?.name || ''
     } catch (error) {
-        ElNotification({ title: '错误', message: error?.response?.data?.message || '加载失败', type: 'error' })
+        if (error?.response?.status != 404 && appState.loggedIn) {
+            ElNotification({ title: '错误', message: error?.response?.data?.message || '加载失败', type: 'error' })
+        }
     } finally {
         loading.value = false
     }
@@ -123,11 +123,12 @@ const save = async () => {
             saving.value = false
             return
         }
-        await api.post(`/v0/users/-/collections/${props.subjectId}`, { rate: rate.value, comment: comment.value, type: getValueByLabel(epStatus.value) }, { useToken: true })
+        await api.post(`/v0/users/-/collections/${props.subject?.id}`, { rate: rate.value, comment: comment.value, type: getValueByLabel(epStatus.value) }, { useToken: true })
         ElNotification({ title: '成功', message: '已保存评分与评价', type: 'success' })
         emit('saved', { rate: rate.value, comment: comment.value })
         visibleInner.value = false
     } catch (error) {
+        console.log(error)
         ElNotification({ title: '错误', message: error?.response?.data?.message || '保存失败', type: 'error' })
     } finally {
         saving.value = false
