@@ -20,7 +20,7 @@
                   <el-text tag="h1" size="large" style="font-size: 24px; font-weight: bold;">{{ subject?.name_cn ||
                     subject?.name }}</el-text>
                   <el-text v-if="subject?.name_cn && subject?.name !== subject?.name_cn" type="info">{{ subject?.name
-                    }}</el-text>
+                  }}</el-text>
 
                   <el-row align="middle" :gutter="20">
                     <el-col :span="24">
@@ -99,7 +99,7 @@
             <el-card header="制作人员 Staff">
               <el-space wrap v-if="subject?.staff?.length">
                 <el-tag v-for="(s, i) in subject?.staff" :key="i" type="info" effect="plain">
-                  {{ s.role_name }} : {{ s.name }}
+                  {{ s?.jobs?.join('、') }} ： {{ s.name }}
                 </el-tag>
               </el-space>
               <el-empty v-else description="暂无制作信息" />
@@ -150,7 +150,6 @@ const loadUserCollection = async () => {
     const response = await api.get(`/v0/users/${appState.userInfo.username}/collections/${subject.value.id}`, { useToken: true })
     collected.value = true
   } catch (e) {
-    // console.error(e)
     collected.value = false
   }
 }
@@ -165,8 +164,6 @@ const onClickCollect = () => {
 }
 
 const onRatingSaved = (payload) => {
-  // userCollection.value.rate = payload?.rate ?? 0
-  // userCollection.value.comment = payload?.comment ?? ''
   collected.value = true
   ElMessage.success('收藏信息已更新')
 }
@@ -176,13 +173,6 @@ const getCharacters = (sub) => sub?.crt || sub?.characters || []
 const mapType = (t) => ({ 1: '书籍', 2: '动画', 3: '音乐', 4: '游戏', 6: '三次元' })[t ?? 0] || '条目'
 
 onMounted(load)
-
-// watch(appState, (newVal, oldVal) => {
-//   if (newVal?.loggedIn !== oldVal?.loggedIn)
-//     load
-// },
-//   { immediate: true }
-// )
 
 watch(() => appState.loggedIn, (loggedIn) => {
   loadUserCollection().catch(() => { })
